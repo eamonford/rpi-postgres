@@ -1,7 +1,13 @@
 FROM resin/rpi-raspbian
-RUN apt-get update && apt-get install postgresql
-COPY pg_hba.conf /etc/postgresql/9.4/main/
-COPY start.sh .
-EXPOSE 5432
-RUN ["bash", "start.sh"]
-ENTRYPOINT tail -f /var/log/dmesg
+
+MAINTAINER Eamon Ford <eamonford@gmail.com>
+
+RUN apt-get update && apt-get install postgresql-9.4
+COPY . .
+RUN bash allow_remote_connections.sh
+
+ENV DB_NAME database
+ENV DB_USER admin
+ENV DB_PASS password
+
+ENTRYPOINT ["bash", "start.sh"]
